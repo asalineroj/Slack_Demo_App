@@ -13,7 +13,8 @@ const app = new App({
   port: process.env.PORT || 3000
 });
 
-const webclient = new WebClient(process.env.SLACK_USER_TOKEN, {
+const webclient = new WebClient(
+  process.env.SLACK_USER_TOKEN, {
   // LogLevel can be imported and used to make debugging simpler
   logLevel: LogLevel.DEBUG
 });
@@ -56,6 +57,18 @@ app.message(/^(hi|hello|hey).*/, async ({ message, context, say }) => {
     const result = await webclient.chat.delete({
       channel: message.channel,
       ts: message.ts
+    });
+
+    const postMessageUserToken = await webclient.chat.postMessage({
+      "channel": message.channel,
+      "text": `Please don't swear on this channel! :pray:`
+    });
+
+    const postMessageBotToken = await app.client.chat.postMessage({
+      channel: message.channel,
+      text: "I'm actually a Trickster bot",
+      username: "SlackB0t",
+      icon_url: "https://ca.slack-edge.com/E02K9BZ5BGS-USLACKBOT-sv41d8cd98f0-192"
     });
 
     console.log(result);
@@ -152,7 +165,7 @@ app.action('action_b', async ({ body, ack, client }) => {
   });
 });
 
-app.event('app_home_opened', async ({ event, client, context }) => {
+app.event('app_home_opened', async ({ event, context, client }) => {
   try {
     /* view.publish is the method that your app uses to push a view to the Home tab */
     const result = await client.views.publish({
@@ -164,6 +177,79 @@ app.event('app_home_opened', async ({ event, client, context }) => {
   }
   catch (error) {
     console.error(error);
+  }
+});
+
+app.event('reaction_added', async ({ event, message, context, client }) => {
+  // say() sends a message to the channel where the event was triggered
+  console.log('received reaction in message');
+  
+  console.log('This is the event');
+  console.log(event)
+
+  console.log('This is the message');
+  console.log(message);
+
+  console.log('This is the context');
+  console.log(context);
+
+  let button = {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "This is a section block with a button."
+      },
+      "accessory": {
+        "type": "button",
+        "text": {
+          "type": "plain_text",
+          "text": "Click Me",
+          "emoji": true
+        },
+        "value": "click_me_123",
+        "action_id": "button-action"
+      }
+    }
+
+  const result = await app.client.conversations.history({
+      // The token you used to initialize your app
+      token: process.env.SLACK_BOT_TOKEN,
+      channel: event.item.channel,
+      // In a more realistic app, you may store ts data in a db
+      latest: event.item.ts,
+      // Limit results
+      inclusive: true,
+      limit: 1
+    });
+
+  console.log('This is the message retrieved');
+  console.log(result);
+  console.log('These are the message BLOCKS retrieved');
+  console.log(result.messages[0].blocks);
+  // There should only be one result (stored in the zeroth index)
+  message = result.messages[0];
+  
+  if(event.reaction === 'hourglass') {
+    message.blocks.push(button);
+    console.log('These are the message BLOCKS with added button');
+    console.log(result.messages[0].blocks);
+
+
+    try {
+
+      const postMessageBotToken = await app.client.chat.postMessage({
+        channel: event.item.channel,
+        text: "fallback text! block didn't work!",
+        blocks: message.blocks
+      });
+
+      console.log(result);
+    }
+    catch (error) {
+      console.log(error.data.scopes);
+      console.log(error.acceptedScopes);
+      console.error(error);
+    }
   }
 });
 
