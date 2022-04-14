@@ -250,6 +250,8 @@ app.event('reaction_added', async ({ event, message, context, client }) => {
       console.log(error.acceptedScopes);
       console.error(error);
     }
+  } else if(event.reaction === 'eyes') {
+    app.client.add_reaction('hourglass');
   }
 });
 
