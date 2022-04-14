@@ -13,14 +13,8 @@ const app = new App({
   port: process.env.PORT || 3000
 });
 
-const webclient = new WebClient(
-  process.env.SLACK_USER_TOKEN, {
-  // LogLevel can be imported and used to make debugging simpler
-  logLevel: LogLevel.DEBUG
-});
-
 // Listens to incoming messages that contain "hello"
-app.message('hello', async ({ message, say }) => {
+/*app.message('hello', async ({ message, say }) => {
   // say() sends a message to the channel where the event was triggered
   console.log('received String message');
   await say({
@@ -44,70 +38,10 @@ app.message('hello', async ({ message, say }) => {
     text: `Hey there <@${message.user}>!`
   });
 });
-
-app.message(/^(hi|hello|hey).*/, async ({ message, context, say }) => {
-  // say() sends a message to the channel where the event was triggered
-  console.log('received RegEx message');
-  const greeting = context.matches[0];
-
-  console.log(message);
-
-  try {
-    // Call the chat.delete method using the WebClient
-    const result = await webclient.chat.delete({
-      channel: message.channel,
-      ts: message.ts
-    });
-
-    const postMessageUserToken = await webclient.chat.postMessage({
-      "channel": message.channel,
-      "text": `Please don't swear on this channel! :pray:`
-    });
-
-    const postMessageBotToken = await app.client.chat.postMessage({
-      channel: message.channel,
-      text: "I'm actually a Trickster bot",
-      username: "SlackB0t",
-      icon_url: "https://ca.slack-edge.com/E02K9BZ5BGS-USLACKBOT-sv41d8cd98f0-192"
-    });
-
-    console.log(result);
-  }
-  catch (error) {
-    console.log(error.data.scopes);
-    console.log(error.acceptedScopes);
-    console.error(error);
-  }
-
-  await say({
-    blocks: [
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": `${greeting} there <@${message.user}>!`
-        },
-        "accessory": {
-          "type": "button",
-          "text": {
-            "type": "plain_text",
-            "text": "Click Me"
-          },
-          "action_id": "button_click"
-        }
-      }
-    ],
-    text: `Hey there <@${message.user}>!`
-  });
-});
-
-app.action('button_click', async ({ body, ack, say }) => {
-  // Acknowledge the action
-  await ack();
-  await say(`<@${body.user.id}> clicked the button`);
-});
+*/
 
 //Home tab setup
+//Home view
 const homeView = 
 {
    "type":"home",
@@ -165,6 +99,7 @@ app.action('action_b', async ({ body, ack, client }) => {
   });
 });
 
+//Home app
 app.event('app_home_opened', async ({ event, context, client }) => {
   try {
     /* view.publish is the method that your app uses to push a view to the Home tab */
@@ -233,8 +168,6 @@ app.event('reaction_added', async ({ event, message, context, client }) => {
     message.blocks.push(button);
     console.log('These are the message BLOCKS with added button');
     console.log(result.messages[0].blocks);
-
-
     try {
 
       const postMessageBotToken = await app.client.chat.postMessage({
