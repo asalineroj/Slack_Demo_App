@@ -103,6 +103,7 @@ app.action('action_b', async ({ body, ack, client }) => {
 app.event('app_home_opened', async ({ event, context, client }) => {
   try {
     /* view.publish is the method that your app uses to push a view to the Home tab */
+    console.log(app_home_called);
     const result = await client.views.publish({
         /* the user that opened your app's app home */
         user_id: event.user,
