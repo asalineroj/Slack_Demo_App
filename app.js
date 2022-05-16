@@ -180,7 +180,7 @@ app.event('reaction_added', async ({ event, message, context, client }) => {
         "type": "button",
         "text": {
           "type": "plain_text",
-          "text": ":sfdc: Claim",
+          "text": ":service-cloud: Claim",
           "emoji": true
         },
         "value": "swarm_escalated_claimed",
