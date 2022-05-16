@@ -6,7 +6,7 @@ const { WebClient, LogLevel } = require("@slack/web-api");
 const ESCALATION_CHANNEL = 'C03AVQPURB7';
 
 //
-const SLEEP_TIMER = 120 || process.env.SLEEP_TIMER;
+//const SLEEP_TIMER = 120 || process.env.SLEEP_TIMER;
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
