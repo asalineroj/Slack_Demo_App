@@ -5,8 +5,8 @@ const { WebClient, LogLevel } = require("@slack/web-api");
 //Escalation Channel - 777
 const ESCALATION_CHANNEL = 'C03AVQPURB7';
 
-//Timer duration
-const SLEEP_TIMER = process.env.SLEEP_TIMER || 120;
+//Timer duration default 120000 ms
+const SLEEP_TIMER = process.env.SLEEP_TIMER || 120000;
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -48,6 +48,12 @@ const app = new App({
   Priority: High
 });
 */
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 // Home tab setup
 // Home view
