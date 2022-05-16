@@ -5,8 +5,8 @@ const { WebClient, LogLevel } = require("@slack/web-api");
 //Escalation Channel - 777
 const ESCALATION_CHANNEL = 'C03AVQPURB7';
 
-//
-//const SLEEP_TIMER = 120 || process.env.SLEEP_TIMER;
+//Timer duration
+const SLEEP_TIMER = process.env.SLEEP_TIMER || 120;
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -284,7 +284,8 @@ app.message(/.*High.*/, async ({ message, context, say }) => {
         "timestamp": message.ts
       };
 
-      //TODO: Add timer before flagging
+      //timer before flagging
+      await sleep(SLEEP_TIMER);
       app.client.reactions.add(reaction);
 
     }
