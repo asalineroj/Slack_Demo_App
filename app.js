@@ -5,6 +5,9 @@ const { WebClient, LogLevel } = require("@slack/web-api");
 //Escalation Channel - 777
 const ESCALATION_CHANNEL = 'C03AVQPURB7';
 
+//
+const SLEEP_TIMER = 120 || process.env.SLEEP_TIMER;
+
 // Initializes your app with your bot token and signing secret
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN, //Token for Posting Web API
@@ -152,7 +155,7 @@ app.event('reaction_added', async ({ event, message, context, client }) => {
           "emoji": true
         },
         "value": "click_me_123",
-        "action_id": "swarm_claim"
+        "action_id": "swarm_escalated_claimed"
       }
     }
 
@@ -258,6 +261,7 @@ app.message(/.*High.*/, async ({ message, context, say }) => {
         "timestamp": message.ts
       };
 
+      //TODO: Add timer before flagging
       app.client.reactions.add(reaction);
 
     }
