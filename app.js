@@ -125,6 +125,29 @@ app.event('app_home_opened', async ({ event, context, client }) => {
   }
 });
 
+//Claim swarm escalated case swarm_escalated_claimed
+app.action('swarm_escalated_claimed', async ({ body, ack, client }) => {
+  // Acknowledge the action
+  console.log(body);
+
+  const result = await client.chat.postMessage({
+    "channel": body.container.channel_id,
+    "thread_ts": body.container.message_ts,
+    "text": `swarm_escalated_claimed`
+  });
+  console.log("************SWARM RESULT*************");
+  console.log(result);
+
+  //Deleting SmockTrigger
+  let deleteTrigger = {
+    "channel": result.channel,
+    "name": "skull",
+    "timestamp": result.message.ts
+  };
+  app.client.reactions.add(deleteTrigger);
+
+});
+
 // Capture emojis/reactions
 app.event('reaction_added', async ({ event, message, context, client }) => {
   // say() sends a message to the channel where the event was triggered
@@ -154,7 +177,7 @@ app.event('reaction_added', async ({ event, message, context, client }) => {
           "text": ":sfdc: Claim",
           "emoji": true
         },
-        "value": "click_me_123",
+        "value": "swarm_escalated_claimed",
         "action_id": "swarm_escalated_claimed"
       }
     }
